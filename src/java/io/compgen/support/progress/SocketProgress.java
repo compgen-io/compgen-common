@@ -12,8 +12,42 @@ import java.util.List;
 public class SocketProgress extends BaseProgress {
     protected static Thread serverThread = null;
     protected static List<SocketProgress> progresses = new ArrayList<SocketProgress>();
+	protected static String header = null;
+
+	public static void setHeader(String header) {
+		SocketProgress.header = header;
+    }
 	
-    protected String header = null;
+    protected static String getStatusMessage() {
+        String str = "";
+        str += SocketProgress.header;
+        for (SocketProgress sp:progresses) {
+            if (sp.name != null) {
+                str += "Name     : " + sp.name + "\n";
+            }
+            str += "\n";
+            str += "Started  : " + sp.startDate + "\n";
+            str += "Elapsed  : " + secondsToString(sp.elapsedMilliSec() / 1000) + "\n";
+            
+            if (sp.total > 0) {
+                str += "Remaining: " + secondsToString(sp.estRemainingSec()) + "\n\n";
+            }
+
+            str += "Total    : " + sp.total + "\n";
+            str += "Current  : " + sp.current + " (" + String.format("%.1f", sp.pctComplete()*100) + "%)\n";
+    
+            if (sp.msg != null) {
+                str += "\n";
+                str += sp.msg;
+            }
+            str += "\n";
+        
+        }
+        str += "\n";
+        return str;
+    }
+ 
+
     protected String socketPath=null;
     protected int port = 0;
     
@@ -29,10 +63,6 @@ public class SocketProgress extends BaseProgress {
         this.port = port;
     }
 
-    public void setHeader(String header) {
-    	this.header = header;
-    }
-    
     @Override
     synchronized
     public void done() {
@@ -107,36 +137,5 @@ public class SocketProgress extends BaseProgress {
         if (serverThread == null) {
             startServer();
         }
-    }
-    
-    protected static String getStatusMessage() {
-        String str = "";
-        for (SocketProgress sp:progresses) {
-        	if (sp.header != null) {
-        		str += sp.header + "\n";
-        	}
-            if (sp.name != null) {
-                str += "Name     : " + sp.name + "\n";
-            }
-            str += "\n";
-            str += "Started  : " + sp.startDate + "\n";
-            str += "Elapsed  : " + secondsToString(sp.elapsedMilliSec() / 1000) + "\n";
-            
-            if (sp.total > 0) {
-                str += "Remaining: " + secondsToString(sp.estRemainingSec()) + "\n\n";
-            }
-
-            str += "Total    : " + sp.total + "\n";
-            str += "Current  : " + sp.current + " (" + String.format("%.1f", sp.pctComplete()*100) + "%)\n";
-    
-            if (sp.msg != null) {
-                str += "\n";
-                str += sp.msg;
-            }
-            str += "\n";
-        
-        }
-        str += "\n";
-        return str;
     }
 }

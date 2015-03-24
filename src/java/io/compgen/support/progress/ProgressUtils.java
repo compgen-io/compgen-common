@@ -55,10 +55,16 @@ public class ProgressUtils {
     }
 
     public static <T> Iterator<T> getIterator(String name, final Iterator<T> it, final ProgressStats stats) {
-        return getIterator(name, it, stats, null);
+        return getIterator(name, it, stats, null, null);
     }
-    
     public static <T> Iterator<T> getIterator(String name, final Iterator<T> it, ProgressStats stats, final ProgressMessage<T> msg) {
+        return getIterator(name, it, stats, msg, null);
+    }
+    public static <T> Iterator<T> getIterator(String name, final Iterator<T> it, ProgressStats stats, final ProgressFinalizer<T> finalizer) {
+        return getIterator(name, it, stats, null, finalizer);
+    }
+
+    public static <T> Iterator<T> getIterator(String name, final Iterator<T> it, ProgressStats stats, final ProgressMessage<T> msg, final ProgressFinalizer<T> finalizer) {
         final Progress progress = ProgressUtils.getProgress(name);
         
         final ProgressStats statsMon;
@@ -88,6 +94,11 @@ public class ProgressUtils {
                     if (progress != null) {
                         progress.done();
                     }
+                    
+                    if (finalizer != null) {
+                    	finalizer.finalize(it);
+                    }
+                    
                     // TODO: THIS NEEDS BE INCLUDED FOR HTSJDK
 //                    if (it instanceof CloseableIterator) {
 //                        ((CloseableIterator<T>) it).close();
