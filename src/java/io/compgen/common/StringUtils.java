@@ -1,6 +1,6 @@
-package io.compgen.support;
+package io.compgen.common;
 
-import io.compgen.support.IterUtils.MapFunc;
+import io.compgen.common.IterUtils.MapFunc;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-<project name="compgen-support" default="jar">
+<project name="compgen-common" default="jar">
     <property name="version" value="0.1"/>
     <property name="lib.dir" value="lib"/>
     <property name="build.dir" value="build"/>

@@ -1,6 +1,6 @@
-package io.compgen.support.progress;
+package io.compgen.common.progress;
 
-import io.compgen.support.TTY;
+import io.compgen.common.TTY;
 
 import java.util.Iterator;
 

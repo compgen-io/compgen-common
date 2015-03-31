@@ -1,4 +1,4 @@
-package io.compgen.support;
+package io.compgen.common;
 
 public class ComparablePair<X extends Comparable<X>, Y extends Comparable<Y>> extends Pair<X, Y> implements Comparable<ComparablePair<X,Y>>{
 	public ComparablePair(X one, Y two) {

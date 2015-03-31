@@ -1,4 +1,4 @@
-package io.compgen.support;
+package io.compgen.common;
 
 import java.util.HashMap;
 import java.util.Map;

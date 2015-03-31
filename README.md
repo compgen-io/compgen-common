@@ -1,3 +1,3 @@
-compgen-support - Java utility classes
+compgen-common - Java utility classes
 ====
 

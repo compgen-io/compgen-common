@@ -1,4 +1,4 @@
-package io.compgen.support.progress;
+package io.compgen.common.progress;
 
 import java.util.Date;
 
