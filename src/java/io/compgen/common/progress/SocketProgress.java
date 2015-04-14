@@ -20,7 +20,7 @@ public class SocketProgress extends BaseProgress {
 	
     protected static String getStatusMessage() {
         String str = "";
-        str += SocketProgress.header;
+        str += SocketProgress.header+"\n";
         for (SocketProgress sp:progresses) {
             if (sp.name != null) {
                 str += "Name     : " + sp.name + "\n";
