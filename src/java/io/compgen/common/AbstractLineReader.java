@@ -13,7 +13,9 @@ import java.util.zip.GZIPInputStream;
 public abstract class AbstractLineReader<T> implements Iterable<T> {
     final private Reader reader;
     final protected FileChannel channel;
-    public AbstractLineReader(String filename) throws IOException {
+	private BufferedReader iteratorReader = null;
+
+	public AbstractLineReader(String filename) throws IOException {
         if (filename.equals("-")) {
             this.reader = new InputStreamReader(System.in);
             this.channel = null;
@@ -38,23 +40,27 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
     }
     
     public void close() throws IOException {
-        this.reader.close();
+    	if (this.iteratorReader != null) {
+    		this.iteratorReader.close();
+    	} else {
+    		this.reader.close();
+    	}
     }
     
     protected abstract T convertLine(String line);
     
     @Override
     public Iterator<T> iterator() {
+    	iteratorReader = new BufferedReader(reader);
         return new Iterator<T>() {
-            BufferedReader br = new BufferedReader(reader);
             String next = readnext();
             
             private String readnext() {
-                String line = null;
+            	String line = null;
                 
                 while (line == null) {
                     try {
-                        line = br.readLine();
+                        line = iteratorReader.readLine();
                     } catch (IOException e) {
                         line = null;
                     }
@@ -64,7 +70,7 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
                 }
                 if (line == null) {
                     try {
-                        br.close();
+                    	iteratorReader.close();
                     } catch (IOException e) {
                     }
                 }
