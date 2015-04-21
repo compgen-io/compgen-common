@@ -25,7 +25,10 @@
         <echo file="${build.dir}/classes/VERSION" message="${ant.project.name}-${version}-${repository.version}"/>
 
 		<mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/${ant.project.name}-${version}.jar" basedir="${build.dir}/classes"/>
+        <jar destfile="${dist.dir}/${ant.project.name}-${version}.jar">
+            <fileset dir="${build.dir}/classes"/>
+            <fileset dir="${src.dir}/java" includes="**/*.java"/>
+        </jar>
 	</target>
 
 	<!-- See http://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
