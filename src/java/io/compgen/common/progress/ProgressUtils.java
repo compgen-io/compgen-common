@@ -68,7 +68,6 @@ public class ProgressUtils {
 
     public static <T> Iterator<T> getIterator(String name, final Iterator<T> it, ProgressStats stats, final ProgressMessage<T> msg, final ProgressFinalizer<T> finalizer) {
         final Progress progress = ProgressUtils.getProgress(name);
-        
         final ProgressStats statsMon;
         if (stats == null) {
             statsMon = new ProgressStats() {
