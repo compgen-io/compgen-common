@@ -198,7 +198,7 @@ public class DataIO {
         
         while (v >= 0x7F) {
             writeRawByte(out, (byte)((v & 0x7F) | 0x80));
-            v = v >> 7;
+            v = v >>> 7;
         }
         writeRawByte(out, (byte)(v & 0x7F));
     }
