@@ -120,7 +120,7 @@ public class PeekableInputStream extends InputStream {
         	}
         	
         	// grow the buffer in bufferSize chunks
-        	System.err.println(" -- growing buffer by " + bufferSize );
+//        	System.err.println(" -- growing buffer by " + bufferSize );
         	byte[] newbuf = new byte[buffer.length + bufferSize];
         	for (int i=0; i<buflen; i++) {
         		newbuf[i] = buffer[i];
