@@ -20,7 +20,9 @@ public class PeekableInputStream extends InputStream {
     private boolean closed = false;
     private byte[] buffer = null;
 
+    // position in buffer
     private int pos = 0;
+    // size of buffer (amount read from parent stream)
     private int buflen = 0;
     
     private int peekpos = 0;
@@ -30,6 +32,7 @@ public class PeekableInputStream extends InputStream {
         this.bufferSize = bufferSize;
         this.buffer = new byte[bufferSize];
     }
+    
     public PeekableInputStream(InputStream parent) throws IOException {
         this(parent, DEFAULT_BUFFERSIZE);
     }
@@ -41,23 +44,16 @@ public class PeekableInputStream extends InputStream {
     }
 
     private void resetBuffer() throws IOException {
-        if (pos >= buflen) { 
+        if (pos >= buflen || buflen == 0) { 
             fillBuffer();
         } else if (pos > 0) {
+        	// copy from pos to new buffer.
             byte[] tmp = new byte[buffer.length];
             for (int i=0; i<buflen - pos; i++) {
                 tmp[i] = buffer[pos + i];
             }
-            
-            buffer = tmp;
-            
-            int read = parent.read(buffer, pos, buffer.length);
 
-            if (read > 0) {
-                buflen = read + pos;
-            } else {
-                buflen = pos;
-            }
+            buflen = buflen - pos;
             pos = 0;
             peekpos = 0;
         }
@@ -103,23 +99,44 @@ public class PeekableInputStream extends InputStream {
             throw new IOException("Attempted to read from closed stream!");
         }
         if (pos > 0 || buflen == 0) {
+        	// we don't peek into an empty buffer, or one where the current pos is > 0.
             resetBuffer();
         }
         
         byte[] out = new byte[bytes];
         
-        for (int i=0; i<bytes && peekpos < buflen; i++) {
+        for (int i=0; i<bytes; i++) {
+        	// we will grow the buffer as needed to fulfill the the request... 
             out[i] = peek();
         }
         
         return out;
     }
+    
     public byte peek() throws IOException {
         if (peekpos >= buflen) {
-            throw new IOException("Attempted to peek beyond buffer!");
+        	if (buffer.length > (Integer.MAX_VALUE - bufferSize)) {
+        		throw new IOException("Attempted to peek beyond buffer!");
+        	}
+        	
+        	// grow the buffer in bufferSize chunks
+        	System.err.println(" -- growing buffer by " + bufferSize );
+        	byte[] newbuf = new byte[buffer.length + bufferSize];
+        	for (int i=0; i<buflen; i++) {
+        		newbuf[i] = buffer[i];
+        	}
+        	// fill in the new buffer.
+            int newbuflen = parent.read(newbuf, buflen, bufferSize);
+            if (newbuflen == -1) {
+        		throw new IOException("Attempted to peek beyond parent inputstream!");
+            }
+            buflen += newbuflen;
+            buffer = newbuf;
+
         }
         return buffer[peekpos++];
     }
+    
     public void resetPeek() {
         peekpos = 0;
     }
