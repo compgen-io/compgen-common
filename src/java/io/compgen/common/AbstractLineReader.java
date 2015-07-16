@@ -1,5 +1,9 @@
 package io.compgen.common;
 
+import io.compgen.common.progress.FileChannelStats;
+import io.compgen.common.progress.ProgressMessage;
+import io.compgen.common.progress.ProgressUtils;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,13 +17,17 @@ import java.util.zip.GZIPInputStream;
 public abstract class AbstractLineReader<T> implements Iterable<T> {
     final private Reader reader;
     final protected FileChannel channel;
+	final protected String name;
+
 	private BufferedReader iteratorReader = null;
 
 	public AbstractLineReader(String filename) throws IOException {
         if (filename.equals("-")) {
             this.reader = new InputStreamReader(System.in);
             this.channel = null;
+            this.name = "<stdin>";
         } else {
+        	this.name = filename;
             FileInputStream fis = new FileInputStream(filename);
             this.channel = fis.getChannel();
             if (filename.endsWith(".gz")) {
@@ -31,12 +39,13 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
     }
 
     public AbstractLineReader(InputStream is) {
-        this(is, null);
+        this(is, null, null);
     }
     
-    public AbstractLineReader(InputStream is, FileChannel channel) {
+    public AbstractLineReader(InputStream is, FileChannel channel, String name) {
         this.reader = new InputStreamReader(is);
         this.channel = channel;
+        this.name = name;
     }
     
     public void close() throws IOException {
@@ -97,5 +106,12 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
             }
             
         };
+    }
+
+    public Iterator<T> progress() {
+    	return progress(null);
+    }
+    public Iterator<T> progress(ProgressMessage<T> msg) {
+    	return ProgressUtils.getIterator(name, iterator(), new FileChannelStats(channel), msg);
     }
 }
