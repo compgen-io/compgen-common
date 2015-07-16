@@ -11,14 +11,32 @@ public class ListBuilder<T> {
 	public ListBuilder() {
 		 l = new ArrayList<T>();
 	}
+	
 	public ListBuilder(List<T> l) {
 		 this.l = l;
+	}
+	
+	@SafeVarargs
+	public ListBuilder(T... items) {
+		 l = new ArrayList<T>();
+		 for (T e: items) {
+			 this.l.add(e);
+		 }
 	}
 	
 	public ListBuilder<T> add(T item) {
 		l.add(item);
 		return this;
 	}
+
+	@SuppressWarnings("unchecked")
+	public ListBuilder<T> add(T... items) {
+		for (T e: items) {
+			l.add(e);
+		}
+		return this;
+	}
+
 	public ListBuilder<T> addAll(Collection<T> items) {
 		l.addAll(items);
 		return this;
