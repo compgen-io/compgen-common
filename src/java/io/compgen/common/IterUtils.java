@@ -132,4 +132,28 @@ public class IterUtils {
             }
         }
     }
+    
+    public static int[] intListToArray(List<Integer> l) {
+    	int[] out = new int[l.size()];
+    	for (int i=0; i<l.size(); i++) {
+    		Integer val = l.get(i); 
+    		if (val == null) {
+    			throw new NullPointerException();
+    		}
+    		out[i] = val;
+    	}
+    	return out;
+    }
+    
+    public static long[] longListToArray(List<Long> l) {
+    	long[] out = new long[l.size()];
+    	for (int i=0; i<l.size(); i++) {
+    		Long val = l.get(i); 
+    		if (val == null) {
+    			throw new NullPointerException();
+    		}
+    		out[i] = val;
+    	}
+    	return out;
+    }
 }
