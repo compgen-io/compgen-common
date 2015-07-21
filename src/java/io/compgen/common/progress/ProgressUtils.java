@@ -110,6 +110,9 @@ public class ProgressUtils {
             
             @Override
             public boolean hasNext() {
+            	if (done) {
+            		return false;
+            	}
                 if (!it.hasNext()) {
                     done();
                     return false;
