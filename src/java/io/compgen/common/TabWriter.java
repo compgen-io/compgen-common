@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.List;
 
 public class TabWriter {
     final private OutputStream out;
@@ -83,4 +84,14 @@ public class TabWriter {
             out.close();
         }
     }
+
+	public void write(List<String> vals) {
+        for (String val:vals) {
+            if (line.equals("")) {
+                line = val;
+            } else {
+                line = line + delim + val;
+            }
+        }
+	}
 }
