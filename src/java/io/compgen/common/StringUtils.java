@@ -284,6 +284,12 @@ public class StringUtils {
         return matches;
     }
 
+	public static int naturalCompare(String o1, String o2) {
+        NaturalTokenList ntl1 = NaturalTokenList.parseString(o1);
+        NaturalTokenList ntl2 = NaturalTokenList.parseString(o2);
+        return ntl1.compareTo(ntl2);
+	}
+
     public static List<String> naturalSort(Iterable<String>iter) {
         List<String> vals = new ArrayList<String>();
         for (String s: iter) {
@@ -568,6 +574,7 @@ public class StringUtils {
     public static void writeFile(String filename, String val, boolean append) throws IOException {
 		writeFile(new File(filename), val, append);
 	}
+
 
 
 }
