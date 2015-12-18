@@ -14,7 +14,7 @@ import java.io.InputStream;
  * @author mbreese
  */
 public class SuffixInputStream extends InputStream {
-    public static final int DEFAULT_BUFFERSIZE = 8192;
+    public static final int DEFAULT_BUFFERSIZE = 64*1024;
     private InputStream parent;
 
     private int suffixLen;

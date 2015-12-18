@@ -13,7 +13,7 @@ import java.io.InputStream;
  * @author mbreese
  */
 public class PeekableInputStream extends InputStream {
-    public static final int DEFAULT_BUFFERSIZE = 8*1024;
+    public static final int DEFAULT_BUFFERSIZE = 64*1024;
     protected final int bufferSize;
     protected final InputStream parent;
 
