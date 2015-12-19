@@ -76,6 +76,11 @@ public class TallyCounts {
         return (double) acc / count;
     }
 
+    /**
+     * 
+     * @param pct 0..1
+     * @return
+     */
     public int getQuantile(double pct) {
         double thres = pct * totalCount;
         long count = 0;
@@ -109,4 +114,8 @@ public class TallyCounts {
     public void incrMissing() {
         this.missing ++;
     }
+
+	public int getMedian() {
+		return getQuantile(0.5);
+	}
 }

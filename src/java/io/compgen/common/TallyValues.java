@@ -9,6 +9,7 @@ import java.util.TreeMap;
 public class TallyValues<T> {
     private Map<T, Long> map = new TreeMap<T, Long>();
     private long missing = 0;
+    private long total = 0;
     
     public TallyValues() {}
     public void incr(T k) {
@@ -17,8 +18,13 @@ public class TallyValues<T> {
         } else {
             map.put(k, map.get(k)+1);
         }
+        total++;
     }
 	
+    public long getTotal() {
+    	return total;
+    }
+    
     public long getCount(T k) {
         if (map.containsKey(k)) {
             return map.get(k);
