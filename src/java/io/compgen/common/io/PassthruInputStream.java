@@ -1,5 +1,6 @@
 package io.compgen.common.io;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,21 +25,29 @@ public class PassthruInputStream extends InputStream {
     
     public PassthruInputStream(InputStream source, OutputStream sink) throws IOException {
     	this.source =source;
-    	this.sink = sink;
+    	this.sink = new BufferedOutputStream(sink);
     }
     
     @Override
     public int read() throws IOException {
     	int b = source.read();
-    	sink.write(b);
+		if (b == -1) {
+	        sink.flush();
+	        sink.close();
+			closed = true;
+		} else {
+			sink.write(b);
+		}
     	return b;
     }
 
     public void close() throws IOException {
-        if (closed) {
-            return;
-        }
         source.close();
-        sink.close();
+    	
+    	// this will flip w/in the read() method.
+        while (!closed) {
+        	// exhaustively read the input stream
+       		read();
+        }
     }
 }
