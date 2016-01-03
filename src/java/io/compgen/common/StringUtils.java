@@ -548,31 +548,35 @@ public class StringUtils {
 		return line.substring(i);
 	}
     
+    public static void writeOutputStream(OutputStream os, String val) throws IOException {
+		os.write(val.getBytes());
+		os.flush();
+    }
+
     public static void writeFile(File file, String val) throws IOException {
 		writeFile(file, val, false);
 	}
-    public static void writeFile(File filename, String val, boolean append) throws IOException {
-		OutputStream os;
-		if (filename.equals("-")) {
-			os = System.out;
-		} else {
-			os = new BufferedOutputStream(new FileOutputStream(filename, append));
-		}
-		
-		os.write(val.getBytes());
-		os.flush();
 
-		if (os != System.out) {
-			os.close();
-		}
-		
+    public static void writeFile(File filename, String val, boolean append) throws IOException {
+    	OutputStream os = new BufferedOutputStream(new FileOutputStream(filename, append));
+		writeOutputStream(os, val);
+		os.close();
 	}
+
     public static void writeFile(String filename, String val) throws IOException {
-		writeFile(new File(filename), val, false);
+    	if (filename.equals("-")) {
+    		writeOutputStream(System.out, val);
+    	} else {
+    		writeFile(new File(filename), val, false);
+    	}
 	}
     
     public static void writeFile(String filename, String val, boolean append) throws IOException {
-		writeFile(new File(filename), val, append);
+    	if (filename.equals("-")) {
+    		writeOutputStream(System.out, val);
+    	} else {
+    		writeFile(new File(filename), val, append);
+    	}
 	}
 
 
