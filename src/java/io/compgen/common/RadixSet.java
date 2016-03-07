@@ -220,11 +220,19 @@ public class RadixSet implements Set<String>{
             if (children.length == 2 && !isKey) {
                 // Only two children, and we aren't a key, so absorb the remaining child's value
                 if (index == 0) {
-                    value = (new String(value) + new String(children[1].value)).toCharArray();
+                	if (value != null) {
+                		value = (new String(value) + new String(children[1].value)).toCharArray();
+                	} else {
+                		value = children[1].value;
+                	}
                     isKey = children[1].isKey;
                     children = children[1].children;
                 } else {
-                    value = (new String(value) + new String(children[0].value)).toCharArray();
+                	if (value != null) {
+                		value = (new String(value) + new String(children[0].value)).toCharArray();
+                	} else {
+                		value = children[0].value;
+                	}
                     isKey = children[0].isKey;
                     children = children[0].children;
                 }
