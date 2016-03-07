@@ -67,16 +67,16 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
             private String readnext() {
             	String line = null;
                 
-                while (line == null) {
+//                while (line == null) {
                     try {
                         line = iteratorReader.readLine();
                     } catch (IOException e) {
                         line = null;
                     }
-                    if (line == null) {
-                        break;
-                    }
-                }
+//                    if (line == null) {
+//                        break;
+//                    }
+//                }
                 if (line == null) {
                     try {
                     	iteratorReader.close();
