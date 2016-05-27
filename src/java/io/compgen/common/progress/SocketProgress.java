@@ -31,10 +31,9 @@ public class SocketProgress extends BaseProgress {
             
             if (sp.total > 0) {
                 str += "Remaining: " + secondsToString(sp.estRemainingSec()) + "\n\n";
+                str += "Total    : " + sp.total + "\n";
+                str += "Current  : " + sp.current + " (" + String.format("%.1f", sp.pctComplete()*100) + "%)\n";
             }
-
-            str += "Total    : " + sp.total + "\n";
-            str += "Current  : " + sp.current + " (" + String.format("%.1f", sp.pctComplete()*100) + "%)\n";
     
             if (sp.msg != null) {
                 str += "\n";

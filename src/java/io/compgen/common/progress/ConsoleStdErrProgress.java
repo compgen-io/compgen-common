@@ -50,7 +50,7 @@ public class ConsoleStdErrProgress extends BaseProgress {
         str += " ";
         str += spinner[spinnerPos++];
 
-        if (total > -1) {
+        if (total > 0) {
             str += " [";
             int completed = (int) (pctComplete() * 20);
             for (int i=0; i<completed; i++) {
