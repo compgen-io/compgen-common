@@ -23,7 +23,11 @@ public class NaturalTokenList implements Comparable<NaturalTokenList>, Iterable<
             @Override
             public void each(NaturalToken foo, NaturalToken bar) {
                 if (compareVal.val == 0) {
-                    compareVal.val = foo.compareTo(bar);
+                	if (foo == null) {
+                		compareVal.val = -1;
+                	} else {
+                		compareVal.val = foo.compareTo(bar);
+                	}
                 }
             }
         }, true);
