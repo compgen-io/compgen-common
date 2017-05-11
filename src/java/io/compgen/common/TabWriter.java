@@ -47,7 +47,7 @@ public class TabWriter {
     public void write(String...vals) {
         for (String val:vals) {
             if (line.equals("")) {
-                line = val;
+                line = ""+val;
             } else {
                 line = line + delim + val;
             }
