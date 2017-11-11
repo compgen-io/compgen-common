@@ -71,13 +71,13 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 		assert magic[2] == 'C';
 		assert magic[3] == 1;
 		
-		System.err.println("magic: " + StringUtils.byteArrayToString(magic));
+//		System.err.println("magic: " + StringUtils.byteArrayToString(magic));
 		
 		long headerLen = DataIO.readUint32(raf);
-		System.err.println("headerLen: " + headerLen);
+//		System.err.println("headerLen: " + headerLen);
 		byte compressByte = (byte) DataIO.readByte(raf);
 		this.compress = (compressByte == 1);
-		System.err.println("compress: " + compressByte);
+//		System.err.println("compress: " + compressByte);
 		
 		raf.seek(4 + headerLen + 4);
 
