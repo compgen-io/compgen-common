@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 
-import io.compgen.common.StringUtils;
 import io.compgen.common.io.DataIO;
 
 //
@@ -36,6 +35,8 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 
 	protected final RandomAccessFile raf;
 	protected boolean compress;
+	protected boolean timestamp;
+	protected long maxAge=-1;
 	
 	// index is stored in memory
 	// key value-start length
@@ -43,18 +44,36 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 	protected Map<K, Long> index = new HashMap<K, Long>();
 	
 	public FileBackedCache(String filename) throws IOException {
-		this(new File(filename), false);
+		this(new File(filename), false, false);
 	}
 	public FileBackedCache(File file) throws IOException {
-		this(file, false);
+		this(file, false, false);
 	}
 	public FileBackedCache(String filename, boolean compress) throws IOException {
-		this(new File(filename), compress);
+		this(new File(filename), compress, false);
+	}
+	public FileBackedCache(String filename, boolean compress, boolean timestamp) throws IOException {
+		this(new File(filename), compress, timestamp);
+	}
+	public FileBackedCache(File file, boolean compress, boolean timestamp) throws IOException {
+		this(file, compress, timestamp, -1);
 	}
 
 	public FileBackedCache(File file, boolean compress) throws IOException {
+		this(file, compress, false);
+	}
+	
+	public FileBackedCache(String filename, boolean compress, boolean timestamp, long maxAgeSecs) throws IOException {
+		this(new File(filename), compress, timestamp, maxAgeSecs);
+	}
+	
+	public FileBackedCache(File file, boolean compress, boolean timestamp, long maxAgeSecs) throws IOException {
+		
+		this.maxAge = maxAgeSecs;
+
 		if (!file.exists()) {
 			this.compress = compress;
+			this.timestamp = timestamp;
 			this.raf = new RandomAccessFile(file, "rw");
 			writeHeader();
 		} else {
@@ -76,7 +95,8 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 		long headerLen = DataIO.readUint32(raf);
 //		System.err.println("headerLen: " + headerLen);
 		byte compressByte = (byte) DataIO.readByte(raf);
-		this.compress = (compressByte == 1);
+		this.compress = (compressByte & 0x1) == 0x1;
+		this.timestamp = (compressByte & 0x2) == 0x2;
 //		System.err.println("compress: " + compressByte);
 		
 		raf.seek(4 + headerLen + 4);
@@ -84,9 +104,19 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 		try {
 		
 			while (raf.getFilePointer() < raf.length()) {
+				boolean expired = false;
 				long pos = raf.getFilePointer();
 //				System.err.println(pos);
-				
+				if (timestamp) {
+					long tstamp = DataIO.readUint64(raf);
+					
+					if (maxAge > 0) {
+						long ageMillis = System.currentTimeMillis() - tstamp;
+						if (maxAge * 1000 < ageMillis) {
+							expired = true;
+						}
+					}				
+				}
 				long keyLenL = DataIO.readUint32(raf);
 				if (keyLenL > 0x7FFFFFFF) {
 					System.err.println("Error! key too big!");
@@ -106,7 +136,6 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 				
 				raf.skipBytes(valLen);
 				
-				
 				ByteArrayInputStream bis = new ByteArrayInputStream(keyBytes);
 				ObjectInputStream ois;
 				if (this.compress) {
@@ -118,10 +147,12 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 				K key = (K) ois.readObject();
 				ois.close();
 
-				if (valLen == 0) {
-					index.put(key,  null);
-				} else {
-					index.put(key,  pos);
+				if (!expired) {
+					if (valLen == 0) {
+						index.put(key,  null);
+					} else {
+						index.put(key,  pos);
+					}
 				}
 				
 //				System.err.println("Found key: " + key + ", pos: "+pos+", val_len: "+valLen);
@@ -144,11 +175,14 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 		DataIO.writeUint32(raf, 1);
 		
 		// compressed?
+		int flag = 0;
 		if (compress) {
-			DataIO.writeRawByte(raf,(byte)1);
-		} else {
-			DataIO.writeRawByte(raf,(byte)0);
+			flag |= 0x1;
 		}
+		if (timestamp) {
+			flag |= 0x2;
+		}
+		DataIO.writeRawByte(raf,(byte)flag);
 	}
 	
 	public void put(K key, V val) {		
@@ -189,6 +223,10 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 				index.put(key, raf.getFilePointer());
 			}				
 
+			if (timestamp) {
+				DataIO.writeUint64(raf, System.currentTimeMillis());
+			}
+			
 			DataIO.writeUint32(raf, keybytes.length   & 0x7FFFFFFF);
 			DataIO.writeRawBytes(raf, keybytes);
 			DataIO.writeUint32(raf, valuebytes.length & 0x7FFFFFFF);
@@ -217,6 +255,20 @@ public class FileBackedCache<K extends Serializable,V extends Serializable> impl
 		try {
 			Long pos = index.get(k);
 			raf.seek(pos);
+			long tstamp=0;
+//			System.err.println(pos);
+			if (timestamp) {
+				tstamp = DataIO.readUint64(raf);
+				
+				if (maxAge > 0) {
+					long ageMillis = System.currentTimeMillis() - tstamp;
+					if (maxAge * 1000 < ageMillis) {
+						// timed out
+						put(k, null);
+						return null;
+					}
+				}				
+			}
 			int keyLen = (int) (DataIO.readUint32(raf) & 0x7FFFFFFF);
 			raf.skipBytes(keyLen);
 			int valLen = (int) (DataIO.readUint32(raf) & 0x7FFFFFFF);

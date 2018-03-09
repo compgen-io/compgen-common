@@ -27,7 +27,8 @@ import java.util.Map;
  * 
  *           NOTE: this value is not parsed. It is compared as-is (query.equals(version))
  *
- * This check can be overridden with an environmental variable. The default variable is "CG_NO_PHONE_HOME".
+ * This check can be overridden with an environmental variable or system property. The default env 
+ * variable is "CG_NO_PHONE_HOME". The default system property is 'io.compgen.common.no_phone_home'.
  * It doesn't have to be set to anything specific - any setting will block the phone home.
  * 
  * @author mbreese
@@ -35,9 +36,12 @@ import java.util.Map;
  */
 public class UpdateCheck {
 	static private final int MAX_ATTEMPTS = 3;
+	static private final String DEFAULT_ENV_NAME="CG_NO_PHONE_HOME";
+	static private final String DEFAULT_PROP_NAME="io.compgen.common.no_phone_home";
 
 	private final String url;
 	private final String envName;
+	private final String propertyName;
 	private int attempts = 0;
 	
 	private Map<String, Map<String, Pair<String, String>>> versions = null;
@@ -45,21 +49,32 @@ public class UpdateCheck {
 	// these are phone-home URL parameters to track (command used, OS, etc...)
 	private Map<String, String> values = new HashMap<String, String>();
 	
-	public UpdateCheck(String url, String envName) {
+	public UpdateCheck(String url, String envName, String propertyName) {
 		this.url = url;
 		this.envName = envName;
+		this.propertyName = propertyName;
 	}
 
 	public UpdateCheck(String url) {
-		this(url, null);
+		this(url, DEFAULT_ENV_NAME, DEFAULT_PROP_NAME);
 	}
 
-	protected boolean noPhoneHome() {
+	protected boolean isPhoneHomeOkay() {
 		if (envName != null) {
 			String check = System.getenv(envName);
-			return (check == null) ? false: true;
+			if (check != null) {
+				return false;
+			}
 		}
-		return false;
+		
+		if (propertyName != null) {
+			String check = System.getProperty(propertyName);
+			if (check != null) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	public void setValue(String key, String value) {
@@ -144,7 +159,7 @@ public class UpdateCheck {
 
 	
 	public String getCurrentVersion(String project, String build) {
-		if (noPhoneHome()) {
+		if (!isPhoneHomeOkay()) {
 			return null;
 		}
 
@@ -165,7 +180,7 @@ public class UpdateCheck {
 		return versions.get(project).get(build).one;
 	}
 	public String getCurrentVersionDescription(String project, String build) {
-		if (noPhoneHome()) {
+		if (!isPhoneHomeOkay()) {
 			return null;
 		}
 

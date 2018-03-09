@@ -20,6 +20,7 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
 	final protected String name;
 
 	private BufferedReader iteratorReader = null;
+	private boolean closed = false;
 
 	public AbstractLineReader(String filename) throws IOException {
         if (filename.equals("-")) {
@@ -54,6 +55,11 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
     	} else {
     		this.reader.close();
     	}
+    	this.closed  = true;
+    }
+    
+    public boolean isClosed() { 
+    	return closed;
     }
     
     protected abstract T convertLine(String line);
