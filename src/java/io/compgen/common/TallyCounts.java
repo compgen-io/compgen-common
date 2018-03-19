@@ -31,6 +31,17 @@ public class TallyCounts {
 //        }
     }
 	
+    public void update(TallyCounts other) {
+    	for (Integer k: other.map.keySet()) {
+    		if (!map.containsKey(k)) {
+    			map.put(k,  other.map.get(k));
+    		} else {
+    			map.put(k, map.get(k) + other.map.get(k));
+    		}
+    	}
+    }
+
+    
     private void incrementKey(int k) {
         if (k < 0) {
             return;
