@@ -34,11 +34,22 @@ public class TallyCounts {
     public void update(TallyCounts other) {
     	for (Integer k: other.map.keySet()) {
     		if (!map.containsKey(k)) {
+    			if (min == -1 || k < min) {
+    				min = k;
+    			}
+
+    			if (max == -1 || k > max) {
+    				max = k;
+    			}
+
     			map.put(k,  other.map.get(k));
     		} else {
     			map.put(k, map.get(k) + other.map.get(k));
     		}
     	}
+    	
+    	this.missing += other.missing;
+    	this.totalCount += other.totalCount;
     }
 
     
