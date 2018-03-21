@@ -133,6 +133,21 @@ public class IterUtils {
         }
     }
     
+    public static Iterator<Integer> range(final int start, final int end) {
+		return new Iterator<Integer>() {
+			int pos = start;
+			@Override
+			public boolean hasNext() {
+				return pos < end;
+			}
+
+			@Override
+			public Integer next() {
+				return pos++;
+			}};
+    	
+    }
+    
     public static int[] intListToArray(List<Integer> l) {
     	int[] out = new int[l.size()];
     	for (int i=0; i<l.size(); i++) {
