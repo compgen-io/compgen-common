@@ -14,6 +14,8 @@ public class TallyCounts {
     private long totalCount = 0;
     private long missing = 0;
     
+    private long acc = 0;
+    
 //    private boolean inclusive = false;
     
     public TallyCounts() {}
@@ -50,6 +52,7 @@ public class TallyCounts {
     	
     	this.missing += other.missing;
     	this.totalCount += other.totalCount;
+    	this.acc += other.acc;
     }
 
     
@@ -57,7 +60,10 @@ public class TallyCounts {
         if (k < 0) {
             return;
         }
+        
         totalCount += 1;
+        acc += k;
+        
         if (!map.containsKey(k)) {
             if (min == -1 || k < min) {
                 min = k;
@@ -70,6 +76,11 @@ public class TallyCounts {
             map.put(k, map.get(k) + 1);
         }
     }
+    
+    public long getSum() {
+    	return acc;
+    }
+    
     public int getMin(){
         return min;
     }
