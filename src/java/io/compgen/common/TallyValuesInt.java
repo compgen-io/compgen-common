@@ -1,0 +1,50 @@
+package io.compgen.common;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class TallyValuesInt<T> {
+    private Map<T, Integer> map = new TreeMap<T, Integer>();
+    private int missing = 0;
+    private int total = 0;
+    
+    public TallyValuesInt() {}
+    public void incr(T k) {
+        if (!map.containsKey(k)) {
+            map.put(k,  1);
+        } else {
+            map.put(k, map.get(k)+1);
+        }
+        total++;
+    }
+	
+    public int getTotal() {
+    	return total;
+    }
+    
+    public int getCount(T k) {
+        if (map.containsKey(k)) {
+            return map.get(k);
+        }
+        return 0;
+    }
+    
+    public Set<T> keySet() {
+        return map.keySet();
+    }
+    
+    public void write(OutputStream out) throws IOException {
+        if (missing > 0) {
+            out.write(("missing\t"+missing+"\n").getBytes());
+        }
+        for (T k: map.keySet()) {
+            out.write((k+"\t"+getCount(k)+"\n").getBytes());
+        }        
+    }
+    public void incrMissing() {
+        missing++;
+    }
+}

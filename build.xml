@@ -1,5 +1,5 @@
 <project name="compgen-common" default="jar">
-    <property name="version" value="0.4.1"/>
+    <property name="version" value="0.4.2"/>
     <property name="lib.dir" value="lib"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
