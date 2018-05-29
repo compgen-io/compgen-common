@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
@@ -29,9 +30,16 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
             this.name = "<stdin>";
         } else {
         	this.name = filename;
+
+        	FileInputStream peek = new FileInputStream(filename);
+            byte[] magic = new byte[2];
+            peek.read(magic);
+            peek.close();
+
             FileInputStream fis = new FileInputStream(filename);
             this.channel = fis.getChannel();
-            if (filename.endsWith(".gz")) {
+
+            if (Arrays.equals(magic, new byte[] {0x1f, (byte) 0x8B})) {
                 this.reader = new InputStreamReader(new GZIPInputStream(fis));
             } else {
                 this.reader = new InputStreamReader(fis);
