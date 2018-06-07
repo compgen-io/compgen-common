@@ -1,7 +1,5 @@
 package io.compgen.common;
 
-import io.compgen.common.IterUtils.MapFunc;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +13,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.compgen.common.IterUtils.MapFunc;
 
 public class StringUtils {
 	private static Random rand = null;
@@ -157,6 +159,18 @@ public class StringUtils {
         return findCommonPrefix(l);
     }
 
+	public static List<String> unique(List<String> strs) {
+		Set<String> tmp = new HashSet<String>();
+		List<String> ret = new ArrayList<String>();
+		for (String s: strs) {
+			if (!tmp.contains(s)) {
+				tmp.add(s);
+				ret.add(s);
+			}
+		}
+		return ret;
+	}
+	
 	public static List<String> getUniqueNames(List<String> strs) {
         List<String> prefixFiltered = filterCommonFragments(strs);
         List<String> reversed = new ArrayList<String>();
