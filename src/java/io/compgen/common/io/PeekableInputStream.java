@@ -38,6 +38,9 @@ public class PeekableInputStream extends InputStream {
     }
 
     private void fillBuffer() throws IOException {
+    	if (parent == null) {
+    		throw new IOException("Parent InputStream is null?");
+    	}
         buflen = parent.read(buffer, 0, buffer.length);
         pos = 0;
         peekpos = 0;
