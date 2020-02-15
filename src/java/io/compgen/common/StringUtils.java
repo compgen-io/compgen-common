@@ -525,6 +525,17 @@ public class StringUtils {
         }
         return str;
     }
+
+    // TODO Does this work?
+    public static String rstrip(String str, String... rem) {
+        Pattern pattern = Pattern.compile("^(.*?)["+StringUtils.join(",",  rem)+"]*$");        
+        Matcher m = pattern.matcher(str);
+        if (m.find()) {        
+            return m.group(1);
+        }
+        return str;
+    }
+
     public static String slice(String str, int start, int end) {
         return str.substring(start, end);
     }
