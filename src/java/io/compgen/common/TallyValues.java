@@ -20,9 +20,13 @@ public class TallyValues<T> {
         }
         total++;
     }
-	
+
+    public long getMissing() {
+        return missing;
+    }
+    
     public long getTotal() {
-    	return total;
+        return total;
     }
     
     public long getCount(T k) {
