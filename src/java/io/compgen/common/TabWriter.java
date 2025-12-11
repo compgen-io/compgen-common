@@ -80,6 +80,7 @@ public class TabWriter {
     
     public void close() throws IOException {
         eol();
+        out.flush();
         if (out != System.out) {
             out.close();
         }

@@ -1,5 +1,5 @@
 <project name="compgen-common" default="jar">
-    <property name="version" value="0.4.4"/>
+    <property name="version" value="0.4.5"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
     <property name="src.dir" value="src"/>
@@ -14,7 +14,20 @@
 
 	<target name="compile">
         <mkdir dir="${build.dir}/classes"/>
-        <javac srcdir="${src.dir}/java" destdir="${build.dir}/classes" classpathref="classpath" debug="true" debuglevel="lines,vars,source" target="1.7" source="1.7"/>
+        <javac
+            srcdir="${src.dir}/java"
+            destdir="${build.dir}/classes"
+            encoding="UTF-8"
+            debug="true"
+            includeantruntime="false"
+            classpathref="classpath"
+            debuglevel="lines,vars,source"
+        	release="8"
+			>
+            <!--modulepathref="classpath"-->
+        			  <compilerarg value="-Xlint:-options"/>
+        </javac>
+		
     </target>
 
 	<target name="jar" depends="compile, git.revision">

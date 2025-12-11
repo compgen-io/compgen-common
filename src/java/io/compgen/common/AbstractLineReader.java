@@ -1,9 +1,5 @@
 package io.compgen.common;
 
-import io.compgen.common.progress.FileChannelStats;
-import io.compgen.common.progress.ProgressMessage;
-import io.compgen.common.progress.ProgressUtils;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +10,10 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
+
+import io.compgen.common.progress.FileChannelStats;
+import io.compgen.common.progress.ProgressMessage;
+import io.compgen.common.progress.ProgressUtils;
 
 public abstract class AbstractLineReader<T> implements Iterable<T> {
     final private Reader reader;
@@ -40,7 +40,8 @@ public abstract class AbstractLineReader<T> implements Iterable<T> {
             this.channel = fis.getChannel();
 
             if (Arrays.equals(magic, new byte[] {0x1f, (byte) 0x8B})) {
-                this.reader = new InputStreamReader(new GZIPInputStream(fis));
+            	GZIPInputStream gzis = new GZIPInputStream(fis);
+                this.reader = new InputStreamReader(gzis);
             } else {
                 this.reader = new InputStreamReader(fis);
             }

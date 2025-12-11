@@ -1,15 +1,17 @@
 package io.compgen.common.updates;
 
-import io.compgen.common.Pair;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.compgen.common.Pair;
 
 /**
  * This class will retrieve a URL that should contain a line for each "project" to check version numbers.
@@ -113,7 +115,7 @@ public class UpdateCheck {
 		versions = new HashMap<String, Map<String, Pair<String, String>>>();
 		
 		try {
-			URL urlGet = new URL(url+"?"+buildQuery());
+			URL urlGet = new URI(url+"?"+buildQuery()).toURL();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(urlGet.openStream()));
 			String line=null;
 			while ((line = reader.readLine()) != null) {
@@ -140,6 +142,8 @@ public class UpdateCheck {
 			} catch (InterruptedException e1) {
 			}
 			load();
+		} catch (URISyntaxException e) {
+			return;
 		}
 	}
 	

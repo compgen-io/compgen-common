@@ -1,8 +1,8 @@
 package io.compgen.common.progress;
 
-import io.compgen.common.TTY;
-
 import java.util.Iterator;
+
+import io.compgen.common.TTY;
 
 public class ProgressUtils {
     public static Progress getProgress(String name) {
